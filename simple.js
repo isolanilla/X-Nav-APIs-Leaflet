@@ -1,15 +1,22 @@
-// JavaScript for simple.html (Leaflet)
-
 $(document).ready(function() {
-    // create a map in the "map" div, set the view to a given place and zoom
-    var map = L.map('map').setView([40.2838, -3.8215], 15);
-    // add an OpenStreetMap tile layer
+
+    var map = L.map('map');
     L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-	attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+        attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 18
     }).addTo(map);
 
-    // add a marker in the given location, attach some popup content to it and open the popup
-    L.marker([40.2838, -3.8215]).addTo(map)
-	.bindPopup('<a href="http://www.etsit.urjc.es">ETSIT</a> (<a href="http://www.urjc.es">URJC</a>)')
-	.openPopup();
+    map.locate({setView: true, maxZoom: 12, enableHighAccuracy: true});
+    function onLocationFound(e) {
+      L.marker(e.latlng).addTo(map).bindPopup("Coordenadas: " + e.latlng.toString()).openPopup();
+       //L.circle(e.latlng, circulo).addTo(map);
+    }
+    map.on('locationfound', onLocationFound);
+
+    var popup = L.popup();
+    function onMapClick(e) {
+       popup.setLatLng(e.latlng).setContent("Ubicación: " + e.latlng.toString()).openOn(map);
+    }
+    map.on('click', onMapClick);
+
 });
